@@ -21,6 +21,24 @@
         <main>
             <div id="inputSection" class="section">
                 <h2>Input Your Terms</h2>
+                <div class="format-instructions">
+                    <p>Enter your terms in either JSON or Plain Text format:</p>
+                    <div class="format-example">
+                        <h3>JSON Format:</h3>
+                        <pre>[
+  {
+    "term": "photosynthesis",
+    "definition": "Process by which plants convert light energy"
+  }
+]</pre>
+                    </div>
+                    <div class="format-example">
+                        <h3>Plain Text Format:</h3>
+                        <pre>photosynthesis
+Process by which plants convert light energy</pre>
+                        <p>Note: Plain text format requires terms and definitions on alternating lines</p>
+                    </div>
+                </div>
                 <textarea id="termsInput" placeholder="Paste your terms and definitions here (JSON or plaintext format)..."></textarea>
                 <div class="button-group">
                     <button id="startGame">Start Game</button>

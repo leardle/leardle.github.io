@@ -215,6 +215,39 @@ footer {
     opacity: 0.7;
 }
 
+.format-instructions {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.format-example {
+    margin: 1rem 0;
+}
+
+.format-example h3 {
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.format-example pre {
+    background-color: var(--surface);
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-family: monospace;
+    border: 1px solid var(--border);
+}
+
+.format-example p {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text);
+    opacity: 0.8;
+}
+
 @media (max-width: 600px) {
     .app-container {
         padding: 0.5rem;
