@@ -140,14 +140,16 @@ button:disabled {
     flex-direction: column;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
+    align-items: center;
 }
 
 .guess-display {
     display: flex;
     flex-direction: row;
-    gap: 0.25rem;
+    gap: 0.5rem;
     justify-content: center;
     margin-bottom: 0.5rem;
+    width: 100%;
 }
 
 .guess-history {
@@ -155,17 +157,19 @@ button:disabled {
     flex-direction: column;
     gap: 0.5rem;
     margin-bottom: 1rem;
+    align-items: center;
 }
 
 .letter {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 3.5rem;
+    height: 3.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--border);
+    border: 2px solid var(--border);
     border-radius: 4px;
     font-weight: bold;
+    font-size: 1.5rem;
     text-transform: uppercase;
     margin: 0;
 }
@@ -228,8 +232,9 @@ footer {
     }
 
     .letter {
-        width: 2rem;
-        height: 2rem;
-        font-size: 0.9rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.2rem;
+        border-width: 1px;
     }
 }
