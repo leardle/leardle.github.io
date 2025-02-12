@@ -52,6 +52,16 @@ h1 {
     color: var(--primary);
 }
 
+h1 a {
+    color: var(--primary);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+h1 a:hover {
+    opacity: 0.9;
+}
+
 .section {
     background-color: var(--surface);
     padding: 2rem;
