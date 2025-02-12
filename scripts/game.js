@@ -5,6 +5,28 @@ class LeardleGame {
         this.attempts = 5;
         this.currentAttempt = 0;
         this.gameActive = false;
+        this.currentTermIndex = -1;
+    }
+
+    parseInput(input) {
+        // Try JSON first
+        try {
+            const success = this.parseJSON(input);
+            if (success) {
+                return { success: true, message: 'JSON parsed successfully!' };
+            }
+        } catch (e) {
+            // JSON parsing failed, continue to plaintext
+            console.log('JSON parsing failed, trying plaintext');
+        }
+        
+        // Try plaintext
+        const success = this.parsePlaintext(input);
+        if (success) {
+            return { success: true, message: 'Text parsed successfully!' };
+        }
+        
+        return { success: false, message: 'Failed to parse input. Please check the format.' };
     }
 
     parseJSON(input) {
@@ -48,13 +70,20 @@ class LeardleGame {
         if (this.terms.length === 0) return false;
         this.currentAttempt = 0;
         this.gameActive = true;
-        this.selectRandomTerm();
+        this.currentTermIndex = -1;
+        this.nextTerm();
         return true;
     }
 
-    selectRandomTerm() {
-        const randomIndex = Math.floor(Math.random() * this.terms.length);
-        this.currentTerm = this.terms[randomIndex];
+    nextTerm() {
+        this.currentTermIndex++;
+        if (this.currentTermIndex >= this.terms.length) {
+            this.gameActive = false;
+            return false;
+        }
+        this.currentTerm = this.terms[this.currentTermIndex];
+        this.currentAttempt = 0;
+        return true;
     }
 
     checkGuess(guess) {
@@ -64,13 +93,14 @@ class LeardleGame {
         const correct = this.currentTerm.term;
         
         if (guess === correct) {
-            this.gameActive = false;
+            const moreTerms = this.nextTerm();
             return {
                 correct: true,
                 feedback: Array.from(guess).map(letter => ({
                     letter,
                     status: 'correct'
-                }))
+                })),
+                gameComplete: !moreTerms
             };
         }
 
@@ -91,7 +121,8 @@ class LeardleGame {
 
         return {
             correct: false,
-            feedback
+            feedback,
+            gameComplete: false
         };
     }
 
@@ -100,7 +131,9 @@ class LeardleGame {
             attemptsLeft: this.attempts - this.currentAttempt,
             gameActive: this.gameActive,
             currentDefinition: this.currentTerm?.definition || '',
-            correctTerm: !this.gameActive ? this.currentTerm?.term : null
+            correctTerm: !this.gameActive ? this.currentTerm?.term : null,
+            progress: this.currentTermIndex + 1,
+            totalTerms: this.terms.length
         };
     }
 }
@@ -111,8 +144,6 @@ const game = new LeardleGame();
 // DOM Elements
 const elements = {
     termsInput: document.getElementById('termsInput'),
-    parseJSON: document.getElementById('parseJSON'),
-    parsePlaintext: document.getElementById('parsePlaintext'),
     startGame: document.getElementById('startGame'),
     inputSection: document.getElementById('inputSection'),
     gameSection: document.getElementById('gameSection'),
@@ -122,39 +153,49 @@ const elements = {
     guessHistory: document.getElementById('guessHistory'),
     attemptsLeft: document.getElementById('attemptsLeft'),
     feedbackMessage: document.getElementById('feedbackMessage'),
-    themeToggle: document.getElementById('themeToggle')
+    themeToggle: document.getElementById('themeToggle'),
+    progress: document.getElementById('progress')
 };
 
 // Event Listeners
-elements.parseJSON.addEventListener('click', () => {
-    const success = game.parseJSON(elements.termsInput.value);
-    elements.feedbackMessage.textContent = success ? 'JSON parsed successfully!' : 'Invalid JSON format';
-});
-
-elements.parsePlaintext.addEventListener('click', () => {
-    const success = game.parsePlaintext(elements.termsInput.value);
-    elements.feedbackMessage.textContent = success ? 'Text parsed successfully!' : 'Invalid text format';
-});
-
 elements.startGame.addEventListener('click', () => {
-    if (game.startGame()) {
+    console.log('Start game clicked'); // Debug log
+    const input = elements.termsInput.value;
+    if (!input.trim()) {
+        elements.feedbackMessage.textContent = 'Please enter some terms and definitions first!';
+        return;
+    }
+
+    const parseResult = game.parseInput(input);
+    elements.feedbackMessage.textContent = parseResult.message;
+    console.log('Parse result:', parseResult); // Debug log
+    
+    if (parseResult.success && game.startGame()) {
         elements.inputSection.classList.add('hidden');
         elements.gameSection.classList.remove('hidden');
+        elements.guessHistory.innerHTML = '';
         updateGameUI();
-    } else {
-        elements.feedbackMessage.textContent = 'Please add some terms first!';
     }
 });
 
 elements.submitGuess.addEventListener('click', () => {
     const guess = elements.guessInput.value.trim();
     if (!guess) return;
-
+    
     const result = game.checkGuess(guess);
     if (result) {
         displayGuessResult(result);
         updateGameUI();
         elements.guessInput.value = '';
+        
+        if (result.correct) {
+            if (result.gameComplete) {
+                elements.feedbackMessage.textContent = 'Congratulations! You\'ve completed all the words!';
+            } else {
+                elements.guessHistory.innerHTML = ''; // Clear history for next word
+                elements.feedbackMessage.textContent = 'Correct! Next word...';
+            }
+        }
     }
 });
 
@@ -182,10 +223,8 @@ function displayGuessResult(result) {
     });
 
     elements.guessHistory.appendChild(guessDisplay);
-
-    if (result.correct) {
-        elements.feedbackMessage.textContent = 'Congratulations! You found the word!';
-    } else if (!game.getGameState().gameActive) {
+    
+    if (!result.correct && !game.getGameState().gameActive) {
         elements.feedbackMessage.textContent = `Game Over! The word was: ${game.getGameState().correctTerm}`;
     }
 }
@@ -194,6 +233,7 @@ function updateGameUI() {
     const state = game.getGameState();
     elements.currentDefinition.textContent = state.currentDefinition;
     elements.attemptsLeft.textContent = `Attempts left: ${state.attemptsLeft}`;
+    elements.progress.textContent = `Word ${state.progress} of ${state.totalTerms}`;
     elements.guessInput.disabled = !state.gameActive;
     elements.submitGuess.disabled = !state.gameActive;
 }

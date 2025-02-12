@@ -25,7 +25,7 @@
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: Helvetica, Arial, -apple-system, BlinkMacSystemFont, sans-serif;
     line-height: 1.6;
     background-color: var(--background);
     color: var(--text);
@@ -101,6 +101,7 @@ button:hover {
 button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    background-color: var(--border);
 }
 
 #themeToggle {
@@ -113,11 +114,19 @@ button:disabled {
 
 .game-info {
     margin-bottom: 2rem;
+    text-align: center;
 }
 
 #currentDefinition {
     font-size: 1.2rem;
-    margin-bottom: 1rem;
+    margin: 1rem 0;
+}
+
+#progress {
+    font-size: 1rem;
+    color: var(--primary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
 }
 
 .guess-input {
