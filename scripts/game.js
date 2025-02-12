@@ -1,3 +1,6 @@
+// Debug logging for script loading
+console.log('Game.js loaded successfully');
+
 class LeardleGame {
     constructor() {
         this.terms = [];
@@ -139,9 +142,11 @@ class LeardleGame {
 }
 
 // Initialize game
+console.log('Initializing game...');
 const game = new LeardleGame();
 
 // DOM Elements
+console.log('Setting up DOM elements...');
 const elements = {
     termsInput: document.getElementById('termsInput'),
     startGame: document.getElementById('startGame'),
@@ -158,6 +163,7 @@ const elements = {
 };
 
 // Event Listeners
+console.log('Adding event listeners...');
 elements.startGame.addEventListener('click', () => {
     console.log('Start game clicked'); // Debug log
     const input = elements.termsInput.value;
